@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import styles from './SignInForm.module.css';
+import {Link} from "react-router-dom";
 
 export default function SignUpForm() {
     const [username, setUsername] = useState('');
@@ -25,7 +26,6 @@ export default function SignUpForm() {
             return;
         }
 
-        // Проверка, что пароли совпадают
         if (password !== confirmPassword) {
             setError('Passwords do not match!');
             alert('Passwords do not match!');
@@ -41,20 +41,15 @@ export default function SignUpForm() {
         };
 
         try {
-            const response = await fetch('https://your-api-url.com/signup', {
+            const response = await fetch('http://localhost:8080/signup', {
                 method: 'POST', headers: {
                     'Content-Type': 'application/json',
                 }, body: JSON.stringify(userData),
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to sign up');
-            }
-
-            const data = await response.json();
-            console.log('Success:', data);
+            console.log('Success');
             setShowModal(true);
-            alert('Sign up successful!');
+            alert('Mail send');
         } catch (error) {
             console.error('Error:', error);
             alert('Sign up failed');
@@ -117,6 +112,7 @@ export default function SignUpForm() {
 
                 <button className={styles["buttonSubmit"]} type="submit">Sign Up</button>
 
+                <Link to="/signin" style={{display: "flex"}}>Or sign in?</Link>
             </form>
 
 

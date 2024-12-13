@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './SignInForm.module.css';
 
 export default function SignInForm() {
@@ -30,7 +31,7 @@ export default function SignInForm() {
 
                 <p className={styles["p"]}>
                     Don't have an account?
-                    <span className={styles["span"]}>Sign Up</span>
+                    <Link to="/signup" className={styles["span"]}>Sign Up</Link>
                 </p>
 
                 <p className={styles["p"]}>Or With</p>
