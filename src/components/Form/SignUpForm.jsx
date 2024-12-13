@@ -48,7 +48,7 @@ export default function SignUpForm() {
             });
 
             console.log('Success');
-            setShowModal(true);
+            //setShowModal(true);
             alert('Mail send');
         } catch (error) {
             console.error('Error:', error);
