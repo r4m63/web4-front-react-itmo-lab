@@ -7,32 +7,25 @@ export default function SignUpForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('')
-    const [showModal, setShowModal] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Предотвращаем стандартное поведение формы (перезагрузку страницы)
 
         if (!username || !email || !password || !confirmPassword) {
-            setError('All fields are required!');
             alert('All fields are required!');
             return;
         }
 
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         if (!emailPattern.test(email)) {
-            setError('Please enter a valid email address!');
             alert('Please enter a valid email address!');
             return;
         }
 
         if (password !== confirmPassword) {
-            setError('Passwords do not match!');
             alert('Passwords do not match!');
             return;
         }
-
-        setError('');
 
         const userData = {
             username,
@@ -42,23 +35,29 @@ export default function SignUpForm() {
 
         try {
             const response = await fetch('http://localhost:8080/signup', {
-                method: 'POST', headers: {
+                method: 'POST',
+                headers: {
                     'Content-Type': 'application/json',
-                }, body: JSON.stringify(userData),
+                },
+                body: JSON.stringify(userData),
             });
-
-            console.log('Success');
-            //setShowModal(true);
-            alert('Mail send');
+            if (response.ok) {
+                alert('Verification email has been sent. Please check your email.');
+            } else {
+                // Обработка ошибок
+                const errorData = await response.json();
+                if (response.status === 409) {
+                    alert('User account already exists for provided email-id');
+                } else {
+                    alert(`Sign up failed: ${errorData.message || 'Unknown error'}`);
+                }
+            }
         } catch (error) {
             console.error('Error:', error);
-            alert('Sign up failed');
+            alert('Sign up failed. Please try again later.');
         }
     };
 
-    const handleModalClose = () => {
-        setShowModal(false);
-    };
 
     return (
         <>
@@ -115,18 +114,6 @@ export default function SignUpForm() {
                 <Link to="/signin" style={{display: "flex"}}>Or sign in?</Link>
             </form>
 
-
-            {/* Модальное окно */}
-            {showModal && (
-                <div className={styles["modal"]}>
-                    <div className={styles["modalContent"]}>
-                        <h2>Sign up successful!</h2>
-                        <button className={styles["modalCloseButton"]} onClick={handleModalClose}>
-                            OK
-                        </button>
-                    </div>
-                </div>
-            )}
 
         </>
     )

@@ -8,10 +8,9 @@ export default function SignInForm() {
     const navigate = useNavigate();
 
     // Функция для обработки отправки формы
-    const handleSignIn = (event) => {
+    const handleSignIn = async (event) => {
         event.preventDefault(); // предотвращаем стандартную отправку формы
 
-        // Проверка наличия email и password
         if (!email || !password) {
             alert('Please enter both email and password');
             return;
@@ -22,34 +21,40 @@ export default function SignInForm() {
             password: password,
         };
 
-        // Отправка данных на сервер
-        fetch('http://localhost:8080/signin', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),  // Отправляем email и password
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Invalid credentials');
-                }
-                return response.json();  // Парсим ответ в JSON
-            })
-            .then((data) => {
-                if (data.accessToken) {
-                    // Сохраняем accessToken в localStorage
-                    localStorage.setItem('accessToken', data.accessToken);
-                    navigate('/signin-success');  // Переход на страницу после успешного входа
-                } else {
-                    navigate('/signin-failed');  // Если токен не пришел, перенаправляем обратно на страницу входа
-                }
-            })
-            .catch((error) => {
-                console.error('Error during sign-in:', error);
-                navigate('/signin-error');  // Если произошла ошибка, перенаправляем обратно
+        try {
+            const response = await fetch('http://localhost:8080/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data), // Отправляем email и password
             });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                if (responseData.accessToken) {
+                    // Сохраняем accessToken в localStorage
+                    localStorage.setItem('accessToken', responseData.accessToken);
+                    navigate('/main');
+                    alert('Sign-in successful');
+
+                } else {
+                    alert('Sign-in failed: Access token not received');
+                }
+            } else {
+                const errorData = await response.json(); // Получаем сообщение об ошибке
+                if (response.status === 401) {
+                    alert('Invalid login credentials'); // Неверные данные для входа
+                } else {
+                    alert(`Sign-in failed: ${errorData.message || 'Unknown error'}`);
+                }
+            }
+        } catch (error) {
+            console.error('Error during sign-in:', error);
+            alert('An error occurred during sign-in. Please try again later.');
+        }
     };
+
 
     return (
         <>

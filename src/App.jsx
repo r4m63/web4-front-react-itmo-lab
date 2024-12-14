@@ -1,23 +1,74 @@
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import SignInPage from "./pages/AuthPage/SignInPage.jsx";
 import SignUpPage from "./pages/AuthPage/SignUpPage.jsx";
 import VerificationPage from "./pages/AuthPage/VerificationPage.jsx";
 import NotFoundPage from "./pages/ErrorPage/NotFoundPage.jsx";
+import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 
+// 1. Создание контекста для авторизации
+const AuthContext = createContext();
 
-export default function App() {
+// 2. Создание провайдера контекста
+const AuthProvider = ({ children }) => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken");  // Проверка токена в localStorage
+        if (token) {
+            setIsAuthenticated(true);  // Если токен есть, считаем, что пользователь авторизован
+        } else {
+            setIsAuthenticated(false);  // Если токен отсутствует, считаем, что пользователь не авторизован
+        }
+    }, []);
+
     return (
-        <>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
+
+// 3. Хук для доступа к контексту
+const useAuth = () => useContext(AuthContext);
+
+// 4. Компонент для защищенных маршрутов (если не авторизован, перенаправляет на /signin)
+const PrivateRoute = ({ children }) => {
+    const { isAuthenticated } = useAuth();
+    if (isAuthenticated) {
+        return children;  // Если авторизован, показываем содержимое
+    } else {
+        return <Navigate to="/signin" />;  // Если не авторизован, перенаправляем на /signin
+    }
+};
+
+// 5. Компонент для гостевых маршрутов (если авторизован, перенаправляет на /main)
+const GuestRoute = ({ children }) => {
+    const { isAuthenticated } = useAuth();
+    return !isAuthenticated ? children : <Navigate to="/main" />;
+};
+
+// 6. Главный компонент приложения
+const App = () => {
+    return (
+        <AuthProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={<SignInPage/>}/>
-                    <Route path="/signin" element={<SignInPage/>}/>
-                    <Route path="/signup" element={<SignUpPage/>}/>
-                    <Route path="/signup/verification" element={<VerificationPage/>}/>
+                    {/* Только для гостей */}
+                    <Route path="/" element={<GuestRoute><SignInPage /></GuestRoute>} />
+                    <Route path="/signin" element={<GuestRoute><SignInPage /></GuestRoute>} />
+                    <Route path="/signup" element={<GuestRoute><SignUpPage /></GuestRoute>} />
+                    <Route path="/signup/verification" element={<GuestRoute><VerificationPage /></GuestRoute>} />
 
-                    <Route path="*" element={<NotFoundPage/>}/>
+                    {/* Только для авторизованных */}
+                    <Route path="/main" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+
+                    {/* Для всех пользователей */}
+                    <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </Router>
-        </>
-    )
-}
+        </AuthProvider>
+    );
+};
+
+export default App;
