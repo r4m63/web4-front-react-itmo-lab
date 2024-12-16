@@ -3,11 +3,15 @@ import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import styles from './SignInForm.module.css';
 import GoogleLogInButton from "../GoogleLogInButton.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
+
 
 export default function SignInForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const { setIsAuthenticated } = useAuth(); // Получаем функцию для обновления состояния аутентификации
+
 
     // Функция для обработки отправки формы
     const handleSignIn = async (event) => {
@@ -37,6 +41,7 @@ export default function SignInForm() {
                 if (responseData.accessToken) {
                     // Сохраняем accessToken в localStorage
                     localStorage.setItem('accessToken', responseData.accessToken);
+                    setIsAuthenticated(true);
                     navigate('/main');
                 } else {
                     alert('Sign-in failed: Access token not received');
