@@ -4,10 +4,11 @@ export default function SignInPage() {
     const [xValue, setXValue] = useState(0);
     const [yValue, setYValue] = useState(0);
     const [r, setR] = useState(5);
+    // TODO: сохранять в localstorage (продумать логику сохранения вместе с списком истории попаданий)
     const [points, setPoints] = useState([]); // Сохраняем точки с сервера
 
     const yValues = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
-    const scale = 40; // Масштаб графика
+    const scale = 40; // Масштаб графика, 40
 
     const handleXChange = (e) => {
         const value = e.target.value;
@@ -21,21 +22,19 @@ export default function SignInPage() {
     };
 
     const handleSubmit = async () => {
-        const payload = {x: xValue, y: yValue, r: r};
-        console.log('Отправка данных:', payload);
+        const data = {x: xValue, y: yValue, r: r};
+        console.log('Отправка данных:', data);
 
         try {
             const response = await fetch('/api/submit-coordinates', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload),
+                body: JSON.stringify(data),
             });
 
             if (response.ok) {
                 const result = await response.json();
                 console.log('Результат сервера:', result);
-
-                // Добавляем точку в массив для отображения
                 setPoints([...points, {x: xValue, y: yValue, isHit: result.isHit}]);
             } else {
                 alert('Ошибка сервера.');
@@ -46,8 +45,62 @@ export default function SignInPage() {
         }
     };
 
-    // Конвертация координат на графике
-    const convertToGraph = (value) => 250 + value * scale;
+    const handleClick = async (e) => {
+        const svg = e.target.ownerSVGElement || e.target; // Получаем элемент SVG
+        const point = svg.createSVGPoint();
+
+        // Координаты клика относительно SVG
+        point.x = e.clientX;
+        point.y = e.clientY;
+
+        // Переводим координаты клика в систему координат SVG
+        const svgPoint = point.matrixTransform(svg.getScreenCTM().inverse());
+
+        console.log(`Координаты клика SVG: X = ${svgPoint.x}, Y = ${svgPoint.y}`);
+
+        // Центр графика
+        const centerX = 250; // Центр по оси X
+        const centerY = 250; // Центр по оси Y
+
+        // Масштабируем координаты клика в соответствии с графиком
+        const xClicked = (svgPoint.x - centerX) / scale;
+        const yClicked = (centerY - svgPoint.y) / scale;
+
+        console.log(`Преобразованные координаты: x = ${xClicked}, y = ${yClicked}`);
+
+        // Отправляем данные на сервер
+        try {
+            const response = await fetch('/api/check-point', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    x: xClicked,
+                    y: yClicked,
+                    r: r,
+                }),
+            });
+
+            const result = await response.json();
+            console.log('Ответ от сервера:', result);
+
+            setPoints((prevPoints) => [
+                ...prevPoints,
+                {
+                    x: xClicked,
+                    y: yClicked,
+                    hit: result.isHit,
+                },
+            ]);
+
+            if (result.isHit) {
+                alert('Точка внутри области!');
+            } else {
+                alert('Точка вне области!');
+            }
+        } catch (error) {
+            console.error('Ошибка при отправке данных на сервер:', error);
+        }
+    };
 
     return (
         <>
@@ -107,16 +160,19 @@ export default function SignInPage() {
             </button>
 
             {/* SVG график */}
-            <svg id="graph" xmlns="http://www.w3.org/2000/svg" width="500" height="500"
-                 style={{border: '1px solid black'}}>
-                {/* Треугольник */}
+            <svg
+                id="graph"
+                xmlns="http://www.w3.org/2000/svg"
+                width="500"
+                height="500"
+                onClick={handleClick} // Обработчик клика
+            >
+                {/* Рисуем области (треугольник, прямоугольник, круг) */}
                 <polygon
                     points={`250,250 ${250 - r * scale},250 250,${250 - (r * scale) / 2}`}
                     fill="#122028"
                     fillOpacity="0.6"
                 />
-
-                {/* Прямоугольник */}
                 <rect
                     x={250 - (r * scale) / 2}
                     y="250"
@@ -125,8 +181,6 @@ export default function SignInPage() {
                     fill="#122028"
                     fillOpacity="0.6"
                 />
-
-                {/* Четверть круга */}
                 <path
                     fill="#122028"
                     fillOpacity="0.6"
@@ -137,7 +191,7 @@ export default function SignInPage() {
                 <line x1="0" y1="250" x2="500" y2="250" stroke="#000"/>
                 <line x1="250" y1="0" x2="250" y2="500" stroke="#000"/>
 
-                {/* Подписи осей */}
+                {/* Засечки и подписи */}
                 {[...Array(6)].map((_, i) => (
                     <React.Fragment key={i}>
                         {/* Линии и подписи по оси X */}
@@ -145,37 +199,58 @@ export default function SignInPage() {
                             <>
                                 <line x1={250 - i * scale} y1="248" x2={250 - i * scale} y2="252" stroke="#000"/>
                                 <line x1={250 + i * scale} y1="248" x2={250 + i * scale} y2="252" stroke="#000"/>
-                                <text x={250 - i * scale - 5} y="240" fill="#000">{-i}</text>
-                                <text x={250 + i * scale - 5} y="240" fill="#000">{i}</text>
+                                <text x={250 - i * scale - 5} y="240" fill="#000">
+                                    {-i}
+                                </text>
+                                <text x={250 + i * scale - 5} y="240" fill="#000">
+                                    {i}
+                                </text>
                             </>
                         )}
 
                         {/* Линии и подписи по оси Y */}
                         {i !== 0 && (
                             <>
-                                <line x1="248" y1={250 - i * scale} x2="252" y2={250 - i * scale} stroke="#000"/>
-                                <line x1="248" y1={250 + i * scale} x2="252" y2={250 + i * scale} stroke="#000"/>
-                                <text x="256" y={250 - i * scale + 5} fill="#000">{i}</text>
-                                <text x="256" y={250 + i * scale + 5} fill="#000">{-i}</text>
+                                <line
+                                    x1="248"
+                                    y1={250 - i * scale}
+                                    x2="252"
+                                    y2={250 - i * scale}
+                                    stroke="#000"
+                                />
+                                <line
+                                    x1="248"
+                                    y1={250 + i * scale}
+                                    x2="252"
+                                    y2={250 + i * scale}
+                                    stroke="#000"
+                                />
+                                <text x="256" y={250 - i * scale + 5} fill="#000">
+                                    {i}
+                                </text>
+                                <text x="256" y={250 + i * scale + 5} fill="#000">
+                                    {-i}
+                                </text>
                             </>
                         )}
 
-                        {/* Отображение единственного нуля */}
-                        {i === 0 && (
-                            <text x="256" y="240" fill="#000">0</text>
-                        )}
+                        {/* Отображение нуля */}
+                        {i === 0 && <text x="256" y="240" fill="#000">0</text>}
                     </React.Fragment>
                 ))}
 
+                {/* Стрелки */}
+                <polygon points="250,0 255,5 245,5" fill="#000" stroke="#000"/>
+                <polygon points="500,250 495,245 495,255" fill="#000" stroke="#000"/>
 
-                {/* Отображение точек */}
+                {/* Отображаем точки */}
                 {points.map((point, index) => (
                     <circle
                         key={index}
-                        cx={convertToGraph(point.x)}
-                        cy={convertToGraph(-point.y)} // Инвертируем Y, т.к. SVG направлен вниз
-                        r="4"
-                        fill={point.isHit ? 'green' : 'red'}
+                        cx={250 + point.x * scale}
+                        cy={250 - point.y * scale}
+                        r="5"
+                        fill={point.hit ? 'green' : 'red'}
                     />
                 ))}
             </svg>
