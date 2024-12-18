@@ -11,11 +11,6 @@ export default function SignInPage() {
     const yValues = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
     const scale = 40; // Масштаб графика, 40
 
-    const tableData = [
-        {x: 1, y: 2, r: 3, result: "Успех"},
-        {x: 4, y: 5, r: 6, result: "Неудача"},
-    ];
-
     const handleXChange = (e) => {
         const value = e.target.value;
         if (!isNaN(value) && value >= -5 && value <= 5) {
@@ -41,17 +36,16 @@ export default function SignInPage() {
             const response = await fetch('http://localhost:8080/check-point', {
                 method: 'POST',
                 credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({x: xValue, y: yValue, r: r}),
             });
 
             if (response.ok) {
                 const result = await response.json();
                 console.log('Результат сервера:', result);
-                setPoints([...points, {x: xValue, y: yValue, isHit: result.isHit}]);
+                setPoints([...points, {x: xValue, y: yValue, r: r, hit: result.hit}]);
             } else {
+                console.error('Ошибка сервера.');
                 alert('Ошибка сервера.');
             }
         } catch (error) {
@@ -61,29 +55,23 @@ export default function SignInPage() {
     };
 
     const handleClick = async (e) => {
-        const svg = e.target.ownerSVGElement || e.target; // Получаем элемент SVG
+        const svg = e.target.ownerSVGElement || e.target; // SVG
         const point = svg.createSVGPoint();
 
         // Координаты клика относительно SVG
         point.x = e.clientX;
         point.y = e.clientY;
-
         // Переводим координаты клика в систему координат SVG
         const svgPoint = point.matrixTransform(svg.getScreenCTM().inverse());
-
         console.log(`Координаты клика SVG: X = ${svgPoint.x}, Y = ${svgPoint.y}`);
-
         // Центр графика
         const centerX = 250; // Центр по оси X
         const centerY = 250; // Центр по оси Y
-
         // Масштабируем координаты клика в соответствии с графиком
         const xClicked = (svgPoint.x - centerX) / scale;
         const yClicked = (centerY - svgPoint.y) / scale;
-
         console.log(`Преобразованные координаты: x = ${xClicked}, y = ${yClicked}`);
 
-        // Отправляем данные на сервер
         try {
             const response = await fetch('http://localhost:8080/check-point', {
                 method: 'POST',
@@ -95,24 +83,17 @@ export default function SignInPage() {
                     r: r,
                 }),
             });
-
             const result = await response.json();
             console.log('Ответ от сервера:', result);
-
             setPoints((prevPoints) => [
                 ...prevPoints,
                 {
                     x: xClicked,
                     y: yClicked,
-                    hit: result.isHit,
+                    r: r,
+                    hit: result.hit === true || result.hit === 'true',
                 },
             ]);
-
-            if (result.isHit) {
-                alert('Точка внутри области!');
-            } else {
-                alert('Точка вне области!');
-            }
         } catch (error) {
             console.error('Ошибка при отправке данных на сервер:', error);
         }
@@ -265,7 +246,7 @@ export default function SignInPage() {
                         key={index}
                         cx={250 + point.x * scale}
                         cy={250 - point.y * scale}
-                        r="5"
+                        r="4"
                         fill={point.hit ? 'green' : 'red'}
                     />
                 ))}
@@ -283,12 +264,12 @@ export default function SignInPage() {
                         </tr>
                         </thead>
                         <tbody id="results">
-                        {tableData.map((row, index) => (
+                        {points.map((row, index) => (
                             <tr key={index}>
                                 <td>{row.x}</td>
                                 <td>{row.y}</td>
                                 <td>{row.r}</td>
-                                <td>{row.result}</td>
+                                <td>{row.hit ? "Попал" : "Мимо"}</td>
                             </tr>
                         ))}
                         </tbody>
