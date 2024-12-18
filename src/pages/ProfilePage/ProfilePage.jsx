@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import "./ProfilePage.css"
 
 export default function SignInPage() {
@@ -98,6 +98,38 @@ export default function SignInPage() {
             console.error('Ошибка при отправке данных на сервер:', error);
         }
     };
+
+    // Получение всех точек
+
+    // useEffect(() => {
+    //     // Функция для получения точек
+    //     const fetchPoints = async () => {
+    //         try {
+    //             const response = await fetch('http://localhost:8080/api/all-points', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                     'Authorization': `Bearer ${localStorage.getItem('token')}`, // если требуется авторизация
+    //                 },
+    //             });
+    //
+    //             // Проверяем, что запрос прошел успешно
+    //             if (!response.ok) {
+    //                 throw new Error('Failed to fetch points');
+    //             }
+    //
+    //             // Получаем данные в формате JSON
+    //             const data = await response.json();
+    //
+    //             // Обновляем состояние с полученными точками
+    //             setPoints(data);
+    //         } catch (error) {
+    //             console.error('Error fetching points:', error);
+    //         }
+    //     };
+    //
+    //     fetchPoints();
+    // }, []);
 
     return (
         <>
