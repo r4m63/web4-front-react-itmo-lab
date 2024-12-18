@@ -1,0 +1,30 @@
+.resultsSection {
+    margin: 20px;
+    padding: 10px;
+}
+
+#resultTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#resultTable th {
+    background-color: #f4f4f4;
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+#resultTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#resultTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#resultTable tr:hover {
+    background-color: #f1f1f1;
+}

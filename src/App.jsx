@@ -8,6 +8,7 @@ import VerificationPage from "./pages/AuthPage/VerificationPage.jsx";
 import NotFoundPage from "./pages/ErrorPage/NotFoundPage.jsx";
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import ProfileSettingsPage from "./pages/ProfilePage/ProfileSettingsPage.jsx";
+import LogOutPage from "./pages/AuthPage/LogOutPage.jsx";
 
 const App = () => {
     return (
@@ -19,6 +20,7 @@ const App = () => {
                     <Route path="/signin" element={<GuestRoute><SignInPage/></GuestRoute>}/>
                     <Route path="/signup" element={<GuestRoute><SignUpPage/></GuestRoute>}/>
                     <Route path="/signup/verification" element={<GuestRoute><VerificationPage/></GuestRoute>}/>
+                    <Route path="/logout" element={<PrivateRoute><LogOutPage/></PrivateRoute>}/>
 
                     {/* Только для авторизованных */}
                     <Route path="/main" element={<PrivateRoute><ProfilePage/></PrivateRoute>}/>

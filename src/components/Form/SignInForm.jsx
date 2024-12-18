@@ -10,7 +10,7 @@ export default function SignInForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const { setIsAuthenticated } = useAuth(); // Получаем функцию для обновления состояния аутентификации
+    const {setIsAuthenticated} = useAuth(); // Получаем функцию для обновления состояния аутентификации
 
 
     // Функция для обработки отправки формы
@@ -41,6 +41,7 @@ export default function SignInForm() {
                 if (responseData.accessToken) {
                     // Сохраняем accessToken в localStorage
                     localStorage.setItem('accessToken', responseData.accessToken);
+                    document.cookie = `accessToken=${responseData.accessToken}`;
                     setIsAuthenticated(true);
                     navigate('/main');
                 } else {
@@ -64,7 +65,7 @@ export default function SignInForm() {
     return (
         <>
             <form className={styles["form"]} onSubmit={handleSignIn}> {/* Используем onSubmit для обработки формы */}
-                <h1 style={{ display: "flex", justifyContent: "center" }}>Sign In</h1>
+                <h1 style={{display: "flex", justifyContent: "center"}}>Sign In</h1>
 
                 <div className={styles["flexColumn"]}><label>Email</label></div>
                 <div className={styles["inputForm"]}>
@@ -90,7 +91,7 @@ export default function SignInForm() {
 
                 <div className={styles["flexRow"]}>
                     <div>
-                        <input type="checkbox" />
+                        <input type="checkbox"/>
                         <label>Remember me</label>
                     </div>
                     <span className={styles["span"]}>Forgot password?</span>

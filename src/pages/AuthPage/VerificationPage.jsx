@@ -1,11 +1,13 @@
 import React, {useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 
 export default function VerificationPage() {
 
     const location = useLocation();  // Для доступа к текущему URL
     const navigate = useNavigate();  // Для редиректа на другие страницы
+    const {setIsAuthenticated} = useAuth(); // Получаем функцию для обновления состояния аутентификации
 
     useEffect(() => {
         // Функция для получения параметров из query string
@@ -42,6 +44,8 @@ export default function VerificationPage() {
                 .then((data) => {
                     if (data.accessToken) {
                         localStorage.setItem('accessToken', data.accessToken);
+                        document.cookie = `accessToken=${data.accessToken}`;
+                        setIsAuthenticated(true);
                         navigate('/signin');
                     } else {
                         navigate('/verification-failed');

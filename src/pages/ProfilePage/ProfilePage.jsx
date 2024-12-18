@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import "./ProfilePage.css"
 
 export default function SignInPage() {
     const [xValue, setXValue] = useState(0);
@@ -9,6 +10,11 @@ export default function SignInPage() {
 
     const yValues = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
     const scale = 40; // Масштаб графика, 40
+
+    const tableData = [
+        {x: 1, y: 2, r: 3, result: "Успех"},
+        {x: 4, y: 5, r: 6, result: "Неудача"},
+    ];
 
     const handleXChange = (e) => {
         const value = e.target.value;
@@ -25,10 +31,18 @@ export default function SignInPage() {
         const data = {x: xValue, y: yValue, r: r};
         console.log('Отправка данных:', data);
 
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            console.error('Token is missing!');
+            return;
+        }
+
         try {
-            const response = await fetch('/api/submit-coordinates', {
+            const response = await fetch('http://localhost:8080/check-point', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(data),
             });
 
@@ -70,7 +84,7 @@ export default function SignInPage() {
 
         // Отправляем данные на сервер
         try {
-            const response = await fetch('/api/check-point', {
+            const response = await fetch('http://localhost:8080/check-point', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -254,6 +268,32 @@ export default function SignInPage() {
                     />
                 ))}
             </svg>
+
+            <div>
+                <div className="resultsSection">
+                    <table id="resultTable">
+                        <thead>
+                        <tr>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>R</th>
+                            <th>Результат</th>
+                        </tr>
+                        </thead>
+                        <tbody id="results">
+                        {tableData.map((row, index) => (
+                            <tr key={index}>
+                                <td>{row.x}</td>
+                                <td>{row.y}</td>
+                                <td>{row.r}</td>
+                                <td>{row.result}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </>
     );
 }
