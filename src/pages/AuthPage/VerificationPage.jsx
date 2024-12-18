@@ -26,6 +26,7 @@ export default function VerificationPage() {
             // Если токен существует, выполняем запрос на сервер
             fetch('http://localhost:8080/signup/verification', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },

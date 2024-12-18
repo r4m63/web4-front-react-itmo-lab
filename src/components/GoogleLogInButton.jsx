@@ -24,6 +24,7 @@ export default function GoogleLogInButton() {
             // Отправка данных на сервер
             const res = await fetch('http://localhost:8080/google-login', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -43,8 +44,9 @@ export default function GoogleLogInButton() {
             if (data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken);
                 console.log("Access Token from server: " + data.accessToken);
+                document.cookie = `accessToken=${data.accessToken}`;
+                console.log("set in cookies: " + data.accessToken);
                 setIsAuthenticated(true);
-                // Редирект на главную страницу
                 navigate('/main');
             } else {
                 console.error('Не удалось получить accessToken');

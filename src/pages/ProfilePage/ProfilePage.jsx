@@ -40,6 +40,7 @@ export default function SignInPage() {
         try {
             const response = await fetch('http://localhost:8080/check-point', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -86,6 +87,7 @@ export default function SignInPage() {
         try {
             const response = await fetch('http://localhost:8080/check-point', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     x: xClicked,
