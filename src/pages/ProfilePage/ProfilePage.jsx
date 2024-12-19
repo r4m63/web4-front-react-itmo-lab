@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import "./ProfilePage.css"
+import styles from "../../components/Form/SignInForm.module.css";
+import {Link} from "react-router-dom";
 
 export default function SignInPage() {
     const [xValue, setXValue] = useState(0);
@@ -198,6 +200,8 @@ export default function SignInPage() {
                 <button onClick={handleDelete} style={{padding: '10px 20px', cursor: 'pointer'}}>
                     Очистить
                 </button>
+
+                <Link to="/settings" >Открыть профиль</Link>
             </div>
 
 
