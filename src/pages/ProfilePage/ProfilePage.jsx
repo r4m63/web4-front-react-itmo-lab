@@ -6,7 +6,7 @@ export default function SignInPage() {
     const [yValue, setYValue] = useState(0);
     const [r, setR] = useState(5);
     // TODO: сохранять в localstorage (продумать логику сохранения вместе с списком истории попаданий)
-    const [points, setPoints] = useState([]); // Сохраняем точки с сервера
+    const [points, setPoints] = useState([]);
 
     const yValues = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
     const scale = 40; // Масштаб графика, 40
@@ -99,37 +99,44 @@ export default function SignInPage() {
         }
     };
 
-    // Получение всех точек
+    const handleDelete = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/delete-points', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {'Content-Type': 'application/json'},
+            });
+            if (response.ok) {
+                setPoints([]);
+            } else {
+                console.error('Ошибка удаления точек:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Ошибка запроса:', error);
+        }
+    };
 
-    // useEffect(() => {
-    //     // Функция для получения точек
-    //     const fetchPoints = async () => {
-    //         try {
-    //             const response = await fetch('http://localhost:8080/api/all-points', {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                     'Authorization': `Bearer ${localStorage.getItem('token')}`, // если требуется авторизация
-    //                 },
-    //             });
-    //
-    //             // Проверяем, что запрос прошел успешно
-    //             if (!response.ok) {
-    //                 throw new Error('Failed to fetch points');
-    //             }
-    //
-    //             // Получаем данные в формате JSON
-    //             const data = await response.json();
-    //
-    //             // Обновляем состояние с полученными точками
-    //             setPoints(data);
-    //         } catch (error) {
-    //             console.error('Error fetching points:', error);
-    //         }
-    //     };
-    //
-    //     fetchPoints();
-    // }, []);
+    useEffect(() => {
+        // Функция для получения точек
+        const getAllPoints = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/all-points', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'},
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch points');
+                }
+                const data = await response.json();
+                setPoints(data);
+            } catch (error) {
+                console.error('Error fetching points:', error);
+            }
+        };
+
+        getAllPoints();
+    }, []);
 
     return (
         <>
@@ -184,9 +191,15 @@ export default function SignInPage() {
             </div>
 
             {/* Кнопка отправить */}
-            <button onClick={handleSubmit} style={{padding: '10px 20px', cursor: 'pointer'}}>
-                Отправить координаты
-            </button>
+            <div>
+                <button onClick={handleSubmit} style={{padding: '10px 20px', cursor: 'pointer'}}>
+                    Отправить
+                </button>
+                <button onClick={handleDelete} style={{padding: '10px 20px', cursor: 'pointer'}}>
+                    Очистить
+                </button>
+            </div>
+
 
             {/* SVG график */}
             <svg
