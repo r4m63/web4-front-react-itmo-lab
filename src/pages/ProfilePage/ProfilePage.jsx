@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import "./ProfilePage.css"
-import styles from "../../components/Form/SignInForm.module.css";
 import {Link} from "react-router-dom";
 
 export default function SignInPage() {
@@ -201,7 +200,9 @@ export default function SignInPage() {
                     Очистить
                 </button>
 
-                <Link to="/settings" >Открыть профиль</Link>
+                <Link to="/settings">Открыть профиль</Link>
+
+                <Link to="/logout">Выйти</Link>
             </div>
 
 

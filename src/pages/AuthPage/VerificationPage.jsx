@@ -47,7 +47,7 @@ export default function VerificationPage() {
                         localStorage.setItem('accessToken', data.accessToken);
                         document.cookie = `accessToken=${data.accessToken}`;
                         setIsAuthenticated(true);
-                        navigate('/signin');
+                        navigate('/main');
                     } else {
                         navigate('/verification-failed');
                     }
@@ -58,7 +58,7 @@ export default function VerificationPage() {
                 });
         } else {
             // Если токен отсутствует в URL, редиректим на ошибочную страницу
-            navigate('/verification-error');
+            navigate('/verification-error2');
         }
     }, [location, navigate]);
 

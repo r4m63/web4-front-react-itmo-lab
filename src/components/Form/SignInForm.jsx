@@ -37,25 +37,24 @@ export default function SignInForm() {
                 body: JSON.stringify(data), // Отправляем email и password
             });
 
-            if (response.ok) {
-                const responseData = await response.json();
-                if (responseData.accessToken) {
-                    // Сохраняем accessToken в localStorage
-                    localStorage.setItem('accessToken', responseData.accessToken);
-                    document.cookie = `accessToken=${responseData.accessToken}`;
-                    setIsAuthenticated(true);
-                    navigate('/main');
-                } else {
-                    alert('Sign-in failed: Access token not received');
-                }
-            } else {
-                const errorData = await response.json(); // Получаем сообщение об ошибке
-                if (response.status === 401) {
-                    alert('Invalid login credentials'); // Неверные данные для входа
-                } else {
-                    alert(`Sign-in failed: ${errorData.message || 'Unknown error'}`);
-                }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            const responseData = await response.json();
+
+            if (responseData.accessToken) {
+                // Сохраняем accessToken в localStorage
+                localStorage.setItem('accessToken', responseData.accessToken);
+                console.log("Access Token from server: " + responseData.accessToken);
+                document.cookie = `accessToken=${responseData.accessToken}`;
+                console.log("set in cookies: " + responseData.accessToken);
+                setIsAuthenticated(true);
+                navigate('/main');
+            } else {
+                alert('Sign-in failed: Access token not received');
+            }
+
         } catch (error) {
             console.error('Error during sign-in:', error);
             alert('An error occurred during sign-in. Please try again later.');
