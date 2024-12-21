@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import "./ProfilePage.css"
 import {Link} from "react-router-dom";
+import "./ProfilePage.css"
 
 export default function SignInPage() {
     const [xValue, setXValue] = useState(0);
@@ -140,69 +140,74 @@ export default function SignInPage() {
     }, []);
 
     return (
-        <>
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
             <h1>Dynamic Graph</h1>
 
-            {/* Управление вводом */}
-            <div style={{marginBottom: '20px'}}>
-                <div>
-                    <label>
-                        Введите X (от -5 до 5):
-                        <input
-                            type="number"
-                            value={xValue}
-                            onChange={handleXChange}
-                            min="-5"
-                            max="5"
-                            step="1"
-                        />
-                    </label>
+            <div style={{display: "flex"}}>
+                {/* Управление вводом */}
+                <div style={{marginBottom: '20px'}}>
+                    <div>
+                        <label>
+                            Введите X (от -5 до 5):
+                            <input
+                                type="number"
+                                value={xValue}
+                                onChange={handleXChange}
+                                min="-5"
+                                max="5"
+                                step="1"
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            Выберите Y:
+                            <select value={yValue} onChange={(e) => setYValue(Number(e.target.value))}>
+                                {yValues.map((value) => (
+                                    <option key={value} value={value}>
+                                        {value}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            <input type="radio" value="1" name="r" onChange={handleRChange}/> R = 1
+                        </label>
+                        <label>
+                            <input type="radio" value="2" name="r" onChange={handleRChange}/> R = 2
+                        </label>
+                        <label>
+                            <input type="radio" value="3" name="r" onChange={handleRChange}/> R = 3
+                        </label>
+                        <label>
+                            <input type="radio" value="4" name="r" onChange={handleRChange}/> R = 4
+                        </label>
+                        <label>
+                            <input type="radio" value="5" name="r" onChange={handleRChange} defaultChecked/> R = 5
+                        </label>
+                    </div>
                 </div>
 
+                {/* Кнопка отправить */}
                 <div>
-                    <label>
-                        Выберите Y:
-                        <select value={yValue} onChange={(e) => setYValue(Number(e.target.value))}>
-                            {yValues.map((value) => (
-                                <option key={value} value={value}>
-                                    {value}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                    <div>
+                        <button onClick={handleSubmit}>
+                            Отправить
+                        </button>
+                        <button onClick={handleDelete}>
+                            Очистить
+                        </button>
+                    </div>
+
+                    <div>
+                        <Link to="/settings">Настройки</Link>
+                    </div>
+
                 </div>
-
-                <div>
-                    <label>
-                        <input type="radio" value="1" name="r" onChange={handleRChange}/> R = 1
-                    </label>
-                    <label>
-                        <input type="radio" value="2" name="r" onChange={handleRChange}/> R = 2
-                    </label>
-                    <label>
-                        <input type="radio" value="3" name="r" onChange={handleRChange}/> R = 3
-                    </label>
-                    <label>
-                        <input type="radio" value="4" name="r" onChange={handleRChange}/> R = 4
-                    </label>
-                    <label>
-                        <input type="radio" value="5" name="r" onChange={handleRChange} defaultChecked/> R = 5
-                    </label>
-                </div>
-            </div>
-
-            {/* Кнопка отправить */}
-            <div>
-                <button onClick={handleSubmit} style={{padding: '10px 20px', cursor: 'pointer'}}>
-                    Отправить
-                </button>
-                <button onClick={handleDelete} style={{padding: '10px 20px', cursor: 'pointer'}}>
-                    Очистить
-                </button>
-
-                <Link to="/settings">Открыть профиль</Link>
-
-                <Link to="/logout">Выйти</Link>
             </div>
 
 
@@ -233,6 +238,17 @@ export default function SignInPage() {
                     fillOpacity="0.6"
                     d={`M 250 250 L ${250 + r * scale} 250 A ${r * scale} ${r * scale} 0 0 0 250 ${250 - r * scale}`}
                 />
+
+                {/* Отображаем точки */}
+                {points.map((point, index) => (
+                    <circle
+                        key={index}
+                        cx={250 + point.x * scale}
+                        cy={250 - point.y * scale}
+                        r="4"
+                        fill={point.hit ? 'green' : 'red'}
+                    />
+                ))}
 
                 {/* Оси */}
                 <line x1="0" y1="250" x2="500" y2="250" stroke="#000"/>
@@ -290,16 +306,7 @@ export default function SignInPage() {
                 <polygon points="250,0 255,5 245,5" fill="#000" stroke="#000"/>
                 <polygon points="500,250 495,245 495,255" fill="#000" stroke="#000"/>
 
-                {/* Отображаем точки */}
-                {points.map((point, index) => (
-                    <circle
-                        key={index}
-                        cx={250 + point.x * scale}
-                        cy={250 - point.y * scale}
-                        r="4"
-                        fill={point.hit ? 'green' : 'red'}
-                    />
-                ))}
+
             </svg>
 
             <div>
@@ -327,6 +334,6 @@ export default function SignInPage() {
                 </div>
             </div>
 
-        </>
+        </div>
     );
 }

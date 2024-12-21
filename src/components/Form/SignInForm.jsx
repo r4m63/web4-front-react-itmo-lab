@@ -91,10 +91,8 @@ export default function SignInForm() {
 
                 <div className={styles["flexRow"]}>
                     <div>
-                        <input type="checkbox"/>
-                        <label>Remember me</label>
                     </div>
-                    <span className={styles["span"]}>Forgot password?</span>
+                    <Link to="/passreset" className={styles["span"]}>Forgot password?</Link>
                 </div>
 
                 <button type="submit" className={styles["buttonSubmit"]}>Sign In</button>
