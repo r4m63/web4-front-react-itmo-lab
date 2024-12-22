@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, {useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.jsx";
@@ -45,7 +46,7 @@ export default function VerificationPage() {
                 .then((data) => {
                     if (data.accessToken) {
                         localStorage.setItem('accessToken', data.accessToken);
-                        document.cookie = `accessToken=${data.accessToken}`;
+                        document.cookie = `accessToken=${data.accessToken}; path=/;`;
                         setIsAuthenticated(true);
                         navigate('/main');
                     } else {

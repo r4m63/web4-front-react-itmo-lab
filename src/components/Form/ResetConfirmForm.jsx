@@ -42,6 +42,7 @@ export default function ResetConfirmForm() {
             if (response.ok) {
                 console.log("Password changed successfully!");
                 alert("Password changed successfully!")
+                navigate("/signin")
             }
         } catch (error) {
             console.error('Error:', error);

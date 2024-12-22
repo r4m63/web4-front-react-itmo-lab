@@ -44,7 +44,7 @@ export default function GoogleLogInButton() {
             if (data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken);
                 console.log("Access Token from server: " + data.accessToken);
-                document.cookie = `accessToken=${data.accessToken}`;
+                document.cookie = `accessToken=${data.accessToken}; path=/;`;
                 console.log("set in cookies: " + data.accessToken);
                 setIsAuthenticated(true);
                 navigate('/main');

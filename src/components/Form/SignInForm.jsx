@@ -53,7 +53,8 @@ export default function SignInForm() {
                 // Сохраняем accessToken в localStorage
                 localStorage.setItem('accessToken', responseData.accessToken);
                 console.log("Access Token from server: " + responseData.accessToken);
-                document.cookie = `accessToken=${responseData.accessToken}`;
+                document.cookie = `accessToken=${responseData.accessToken}; path=/;`;
+                //alert("Access Token from server set: " + responseData.accessToken)
                 console.log("set in cookies: " + responseData.accessToken);
                 setIsAuthenticated(true);
                 navigate('/main');
