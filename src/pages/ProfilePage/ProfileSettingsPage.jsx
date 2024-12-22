@@ -1,34 +1,67 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, {useState} from 'react';
 import "./ProfileSettingsPage.css"
 import {Link} from "react-router-dom";
 
 export default function ProfileSettingsPage() {
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+
+        const userData = {
+            password,
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/user/change-pass', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+            if (response.ok) {
+                alert('Password has been successfully changed');
+                setPassword('')
+                setConfirmPassword('')
+            } else {
+                const errorData = await response.json();
+                alert(`Change password failed: ${errorData.message || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Sign up failed. Please try again later.');
+        }
+    };
 
     return (
         <>
             <h1 className="settings-title">User Profile Settings</h1>
 
             <div className="settings-container">
-                <form className="settings-form">
-                    <div className="form-group">
-                        <label className="form-label" htmlFor="username">Username</label>
-                        <input className="form-input" type="text" id="username" name="username"
-                               placeholder="Enter new username"/>
-                    </div>
-                    <div className="form-group">
-                        <button className="form-button" type="submit">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-
-            <div className="settings-container">
-                <form className="settings-form">
+                <form className="settings-form" onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label className="form-label" htmlFor="password">Password</label>
                         <input className="form-input" type="password" id="password" name="password"
-                               placeholder="Enter new password"/>
+                               placeholder="Enter new password" value={password}
+                               onChange={(e) => setPassword(e.target.value)}/>
                     </div>
+
+                    <div className="form-group">
+                        <input className="form-input" type="password" id="password" name="password"
+                               placeholder="Confirm password" value={confirmPassword}
+                               onChange={(e) => setConfirmPassword(e.target.value)}/>
+                    </div>
+
                     <div className="form-group">
                         <button className="form-button" type="submit">Save Changes</button>
                     </div>

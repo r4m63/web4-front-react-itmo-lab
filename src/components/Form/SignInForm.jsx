@@ -17,6 +17,12 @@ export default function SignInForm() {
     const handleSignIn = async (event) => {
         event.preventDefault(); // предотвращаем стандартную отправку формы
 
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!emailPattern.test(email)) {
+            alert('Please enter a valid email address!');
+            return;
+        }
+
         if (!email || !password) {
             alert('Please enter both email and password');
             return;
@@ -57,7 +63,7 @@ export default function SignInForm() {
 
         } catch (error) {
             console.error('Error during sign-in:', error);
-            alert('An error occurred during sign-in. Please try again later.');
+            alert('Not correct login or password');
         }
     };
 
@@ -70,7 +76,7 @@ export default function SignInForm() {
                 <div className={styles["flexColumn"]}><label>Email</label></div>
                 <div className={styles["inputForm"]}>
                     <input
-                        type="text"
+                        type="email"
                         className={styles["input"]}
                         placeholder="Enter your Email"
                         value={email}

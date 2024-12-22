@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, {useState} from 'react';
 import styles from './SignInForm.module.css';
 import {Link} from "react-router-dom";
@@ -9,7 +10,7 @@ export default function SignUpForm() {
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Предотвращаем стандартное поведение формы (перезагрузку страницы)
+        e.preventDefault();
 
         if (!username || !email || !password || !confirmPassword) {
             alert('All fields are required!');
@@ -58,7 +59,6 @@ export default function SignUpForm() {
             alert('Sign up failed. Please try again later.');
         }
     };
-
 
     return (
         <>
