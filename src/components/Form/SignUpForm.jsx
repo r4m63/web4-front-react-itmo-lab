@@ -35,7 +35,7 @@ export default function SignUpForm() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/signup', {
+            const response = await fetch('http://45.93.5.140:21001/signup', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

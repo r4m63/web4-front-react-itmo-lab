@@ -34,7 +34,7 @@ export default function SignInForm() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/signin', {
+            const response = await fetch('http://45.93.5.140:21001/signin', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -53,7 +53,7 @@ export default function SignInForm() {
                 // Сохраняем accessToken в localStorage
                 localStorage.setItem('accessToken', responseData.accessToken);
                 console.log("Access Token from server: " + responseData.accessToken);
-                document.cookie = `accessToken=${responseData.accessToken}; path=/;`;
+                document.cookie = `accessToken=${responseData.accessToken}; path=/; domain=ramil21.ru; SameSite=Lax;`;
                 //alert("Access Token from server set: " + responseData.accessToken)
                 console.log("set in cookies: " + responseData.accessToken);
                 setIsAuthenticated(true);

@@ -11,7 +11,7 @@ const CLIENT_ID = "363689377201-i7d23g08f1qdek5shkjujs482l8pkjrn.apps.googleuser
 export default function GoogleLogInButton() {
 
     const navigate = useNavigate();
-    const { setIsAuthenticated } = useAuth(); // Получаем функцию для обновления состояния аутентификации
+    const {setIsAuthenticated} = useAuth(); // Получаем функцию для обновления состояния аутентификации
 
 
     const handleGoogleLoginSuccess = async (response) => {
@@ -22,7 +22,7 @@ export default function GoogleLogInButton() {
 
         try {
             // Отправка данных на сервер
-            const res = await fetch('http://localhost:8080/google-login', {
+            const res = await fetch('http://45.93.5.140:21001/google-login', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -44,7 +44,7 @@ export default function GoogleLogInButton() {
             if (data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken);
                 console.log("Access Token from server: " + data.accessToken);
-                document.cookie = `accessToken=${data.accessToken}; path=/;`;
+                document.cookie = `accessToken=${data.accessToken}; path=/; domain=ramil21.ru; SameSite=Lax`;
                 console.log("set in cookies: " + data.accessToken);
                 setIsAuthenticated(true);
                 navigate('/main');

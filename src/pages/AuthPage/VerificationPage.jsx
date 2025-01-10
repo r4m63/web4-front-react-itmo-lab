@@ -25,7 +25,7 @@ export default function VerificationPage() {
 
         if (token) {
             // Если токен существует, выполняем запрос на сервер
-            fetch('http://localhost:8080/signup/verification', {
+            fetch('http://45.93.5.140:21001/signup/verification', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -46,7 +46,7 @@ export default function VerificationPage() {
                 .then((data) => {
                     if (data.accessToken) {
                         localStorage.setItem('accessToken', data.accessToken);
-                        document.cookie = `accessToken=${data.accessToken}; path=/;`;
+                        document.cookie = `accessToken=${data.accessToken}; path=/; domain=ramil21.ru;`;
                         setIsAuthenticated(true);
                         navigate('/main');
                     } else {

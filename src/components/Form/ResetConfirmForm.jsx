@@ -31,7 +31,7 @@ export default function ResetConfirmForm() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/passreset/confirm', {
+            const response = await fetch('http://45.93.5.140:21001/passreset/confirm', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -62,7 +62,7 @@ export default function ResetConfirmForm() {
             }
 
             try {
-                const response = await fetch('http://localhost:8080/passreset/verify', {
+                const response = await fetch('http://45.93.5.140:21001/passreset/verify', {
                     method: 'POST',
                     credentials: 'include',
                     headers: {

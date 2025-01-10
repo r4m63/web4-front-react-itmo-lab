@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 import "./ProfilePage.css"
+import ClockGrapgh from "../../components/ClockGrapgh.jsx";
+import ClockGraph from "../../components/ClockGrapgh.jsx";
 
 export default function SignInPage() {
     const [xValue, setXValue] = useState(0);
@@ -34,11 +36,11 @@ export default function SignInPage() {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/check-point', {
+            const response = await fetch('http://45.93.5.140:21001/check-point', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({x: xValue, y: yValue, r: r}),
+                body: JSON.stringify({x: xValue, y: yValue, r: r, token: token}),
             });
 
             if (response.ok) {
@@ -73,8 +75,10 @@ export default function SignInPage() {
         const yClicked = (centerY - svgPoint.y) / scale;
         console.log(`Преобразованные координаты: x = ${xClicked}, y = ${yClicked}`);
 
+        const token = localStorage.getItem('accessToken');
+
         try {
-            const response = await fetch('http://localhost:8080/check-point', {
+            const response = await fetch('http://45.93.5.140:21001/check-point', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {'Content-Type': 'application/json'},
@@ -82,6 +86,7 @@ export default function SignInPage() {
                     x: xClicked,
                     y: yClicked,
                     r: r,
+                    token: token
                 }),
             });
             const result = await response.json();
@@ -102,10 +107,14 @@ export default function SignInPage() {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch('http://localhost:8080/delete-points', {
+            const token = localStorage.getItem('accessToken');
+            const response = await fetch('http://45.93.5.140:21001/delete-points', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    token: token
+                }),
             });
             if (response.ok) {
                 setPoints([]);
@@ -120,11 +129,15 @@ export default function SignInPage() {
     useEffect(() => {
         // Функция для получения точек
         const getAllPoints = async () => {
+            const token = localStorage.getItem('accessToken');
             try {
-                const response = await fetch('http://localhost:8080/all-points', {
+                const response = await fetch('http://45.93.5.140:21001/all-points', {
                     method: 'POST',
                     credentials: 'include',
                     headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        token: token
+                    }),
                 });
                 if (!response.ok) {
                     throw new Error('Failed to fetch points');
@@ -138,6 +151,14 @@ export default function SignInPage() {
 
         getAllPoints();
     }, []);
+
+    // CLOCK - GRAPH
+    const [showGraph, setShowGraph] = useState(true); // Состояние для переключения
+
+    // Функция для переключения отображения
+    const toggleView = () => {
+        setShowGraph(!showGraph);
+    };
 
     return (
         <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
@@ -210,8 +231,12 @@ export default function SignInPage() {
                 </div>
             </div>
 
+            <button onClick={toggleView}>
+                {showGraph ? 'Часы' : 'График'}
+            </button>
 
             {/* SVG график */}
+            {showGraph ? (
             <svg
                 id="graph"
                 xmlns="http://www.w3.org/2000/svg"
@@ -306,8 +331,10 @@ export default function SignInPage() {
                 <polygon points="250,0 255,5 245,5" fill="#000" stroke="#000"/>
                 <polygon points="500,250 495,245 495,255" fill="#000" stroke="#000"/>
 
-
             </svg>
+            ) : (
+                <ClockGraph />
+            )}
 
             <div>
                 <div className="resultsSection">

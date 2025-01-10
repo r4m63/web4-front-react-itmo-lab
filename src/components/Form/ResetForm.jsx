@@ -24,7 +24,7 @@ export default function ResetForm() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/passreset', {
+            const response = await fetch('http://45.93.5.140:21001/passreset', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

@@ -16,12 +16,15 @@ export default function ProfileSettingsPage() {
             return;
         }
 
+        const token = localStorage.getItem('accessToken');
+
         const userData = {
-            password,
+            password: password,
+            token: token
         };
 
         try {
-            const response = await fetch('http://localhost:8080/user/change-pass', {
+            const response = await fetch('http://45.93.5.140:21001/user/change-pass', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -68,24 +71,24 @@ export default function ProfileSettingsPage() {
                 </form>
             </div>
 
-            <div className="settings-container">
-                <div className="form-group">
-                    <label className="form-label" htmlFor="language">Preferred Language</label>
-                    <select className="form-select" id="language" name="language">
-                        <option value="en">English</option>
-                        <option value="es">Spanish</option>
-                        <option value="fr">French</option>
-                        <option value="de">German</option>
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label className="form-label" htmlFor="theme">Theme</label>
-                    <select className="form-select" id="theme" name="theme">
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                    </select>
-                </div>
-            </div>
+            {/*<div className="settings-container">*/}
+            {/*    <div className="form-group">*/}
+            {/*        <label className="form-label" htmlFor="language">Preferred Language</label>*/}
+            {/*        <select className="form-select" id="language" name="language">*/}
+            {/*            <option value="en">English</option>*/}
+            {/*            <option value="es">Spanish</option>*/}
+            {/*            <option value="fr">French</option>*/}
+            {/*            <option value="de">German</option>*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            {/*    <div className="form-group">*/}
+            {/*        <label className="form-label" htmlFor="theme">Theme</label>*/}
+            {/*        <select className="form-select" id="theme" name="theme">*/}
+            {/*            <option value="light">Light</option>*/}
+            {/*            <option value="dark">Dark</option>*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
             <div className="settings-container">
                 <div className="form-group">
                     <Link to="/main">На главную</Link>
