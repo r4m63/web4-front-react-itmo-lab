@@ -10,10 +10,8 @@ export default function SignInForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const {setIsAuthenticated} = useAuth(); // Получаем функцию для обновления состояния аутентификации
+    const {setIsAuthenticated} = useAuth();
 
-
-    // Функция для обработки отправки формы
     const handleSignIn = async (event) => {
         event.preventDefault(); // предотвращаем стандартную отправку формы
 
@@ -67,7 +65,6 @@ export default function SignInForm() {
             alert('Not correct login or password');
         }
     };
-
 
     return (
         <>

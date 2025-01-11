@@ -63,3 +63,28 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+
+/* Адаптация для экранов до 425px */
+@media (max-width: 425px) {
+    .svgContainer {
+        width: 350px;
+        height: 350px;
+    }
+}
+
+/* Адаптация для экранов до 375px */
+@media (max-width: 375px) {
+    .svgContainer {
+        width: 300px; /* Еще меньше */
+        height: 300px;
+    }
+}
+
+/* Адаптация для экранов до 320px */
+@media (max-width: 320px) {
+    .svgContainer {
+        width: 250px; /* Минимальный размер */
+        height: 250px;
+    }
+}

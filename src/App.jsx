@@ -26,9 +26,9 @@ const App = () => {
                     <Route path="/signin/reset-password" element={<GuestRoute><PassResetConfirmPage/></GuestRoute>}/>
 
                     {/* Только для авторизованных */}
-                    <Route path="/main" element={<GuestRoute><ProfilePage/></GuestRoute>}/>
-                    <Route path="/settings" element={<GuestRoute><ProfileSettingsPage/></GuestRoute>}/>
-                    <Route path="/logout" element={<GuestRoute><LogOutPage/></GuestRoute>}/>
+                    <Route path="/main" element={<PrivateRoute><ProfilePage/></PrivateRoute>}/>
+                    <Route path="/settings" element={<PrivateRoute><ProfileSettingsPage/></PrivateRoute>}/>
+                    <Route path="/logout" element={<PrivateRoute><LogOutPage/></PrivateRoute>}/>
 
                     PrivateRoute
 
